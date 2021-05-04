@@ -1,6 +1,7 @@
 SRCDIR=source/
 OBJDIR=obj/
 INCDIR=include/
+RESDIR=result/
 
 CXX=mpic++
 CXXFLAGS+=-std=c++17 -I$(INCDIR)
@@ -13,7 +14,7 @@ PROJ=rozr
 
 all: $(PROJ)
 
-$(PROJ): $(OBJECTS)
+$(PROJ): $(OBJECTS) $(RESDIR)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)
 
 $(OBJECTS): $(OBJDIR)%.o: $(SRCDIR)%.cpp $(OBJDIR)
@@ -22,7 +23,10 @@ $(OBJECTS): $(OBJDIR)%.o: $(SRCDIR)%.cpp $(OBJDIR)
 $(OBJDIR):
 	mkdir $@
 
+$(RESDIR):
+	mkdir $@
+
 .PHONY: clean
 
 clean:
-	rm $(OBJDIR)*.o $(PROJ) result/*.txt
+	rm -f $(OBJDIR)*.o $(PROJ) result/*.txt *.txt
