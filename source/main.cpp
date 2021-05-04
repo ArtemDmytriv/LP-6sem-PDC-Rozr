@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <map>
 #include <unistd.h>
 #include <algorithm>
 
@@ -14,11 +13,6 @@
 const int N1 = 260;
 const int N2 = 168;
 const int N3 = 159;
-
-// For Debug
-// const int N1 = 22;
-// const int N2 = 10;
-// const int N3 = 26;
 
 Matrix concat_matrices_by_cols(std::vector<Matrix> row_vec);
 
@@ -46,7 +40,6 @@ int main(int argc, char* argv[])
 
     const std::vector<int> hamilt_vec {0, 7, 6, 5, 2, 4, 3, 1};
 
-    //std::vector<int> submatrix_rows { 3, 3, 3, 3, 3, 3, 2, 2};
     std::vector<int> submatrix_rows { 32, 32, 32, 32, 33, 33, 33, 33};
     std::vector<int> submatrix_result = submatrix_rows;
     std::vector<int> submatrix_displs_rows(ProcNum);
@@ -58,7 +51,6 @@ int main(int argc, char* argv[])
         submatrix_displs_result[i] = i > 0? submatrix_displs_result[i-1] + submatrix_result[i-1] : 0;
     }
 
-    //std::vector<int> submatrix_cols { 3, 3, 3, 3, 3, 3, 4, 4};
     std::vector<int> submatrix_cols { 20, 20, 20, 20, 20, 20, 20, 19};
     std::vector<int> submatrix_displs_cols(ProcNum);
     for (int i = 0; i < ProcNum; i++) {
@@ -259,38 +251,3 @@ Matrix concat_matrices_by_cols(std::vector<Matrix> row_vec) {
     }
     return C_row;
 }
-
-/*
-        int pos = std::find(hamilt_vec.begin(), hamilt_vec.end(), ProcRank) - hamilt_vec.begin(); // get position if current Proc in hamilt_vec
-        int next_proc = hamilt_vec[(pos + ProcNum + 1) % ProcNum]; // get ID of next proc
-        int prev_proc = hamilt_vec[(pos + ProcNum - 1) % ProcNum]; // get ID of prev proc
-
-        int submatrix_index = ProcRank;
-        for (int i = 1; i < ProcNum; i++) {
-            //std::cout << ProcRank << ": Send B(" << submatrix_index << ") -> " << next_proc << std::endl; // send to 7 ...
-            // MPI_Send(B_temp.data(), submatrix_cols[submatrix_index], MPI_DOUBLE, next_proc, submatrix_index, MPI_COMM_WORLD);
-
-            int recv_tag = hamilt_vec[(pos + ProcNum - i) % ProcNum]; // get submatrix tag for recv
-            Matrix B_recv(submatrix_cols[recv_tag] / N2, N2);        // allocate memmory for recv submatrix
-
-            // std::cout << ProcRank << ": Recv B(" << recv_tag << ") <- " << prev_proc << std::endl;
-            // MPI_Recv(B_recv.data(), submatrix_cols[recv_tag], MPI_DOUBLE, prev_proc, recv_tag, MPI_COMM_WORLD, &Status);
-
-            MPI_Sendrecv(B_temp.data(), submatrix_cols[submatrix_index], MPI_DOUBLE, next_proc, submatrix_index,
-                B_recv.data(), submatrix_cols[recv_tag], MPI_DOUBLE, prev_proc, recv_tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-            C_row_vec[recv_tag] = M_x_Mt(A_temp, B_recv);
-            B_temp = std::move(B_recv);
-            submatrix_index = recv_tag;
-
-            MPI_Barrier(MPI_COMM_WORLD);
-            std::cout << "End " << i << " iteration\n";
-            MPI_Barrier(MPI_COMM_WORLD);
-        }
-
-        // Concat matrices
-
-        // Gather rows to Master
-        // MPI_Gather
-        std::cout << "Parallel Timer duration: " << std::fixed << timer_mpi.getDuration() << " ms" << std::endl;
-*/
